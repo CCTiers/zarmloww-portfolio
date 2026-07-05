@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarmloww | Premium Full Stack Developer</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        cyan: { 400: '#00f3ff', 500: '#00c3ff' },
+                        purple: { 400: '#bd00ff', 500: '#9b00e8' },
+                        dark: '#03030a'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #03030a;
+            color: white;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor */
+        }
+        
+        /* Hide scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #03030a; }
+        ::-webkit-scrollbar-thumb { background: #1f1f2e; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f3ff; }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-ring {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 9999;
+            mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-dot {
+            width: 4px; height: 4px;
+            background: white;
+            border-radius: 50%;
+        }
+        .cursor-ring {
+            width: 32px; height: 32px;
+            border: 2px solid #00f3ff;
+            border-radius: 50%;
+            transition: width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+        /* State when hovering over clickable items */
+        body.cursor-hover .cursor-ring {
+            width: 48px; height: 48px;
+            border-color: #bd00ff;
+            background: rgba(189, 0, 255, 0.1);
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.4);
+        }
+
+        /* Scroll Reveal Utility Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Typing cursor */
+        .type-cursor {
+            display: inline-block;
+            width: 3px; height: 1em;
+            background-color: white;
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Magnetic button wrapper */
+        .magnetic-wrap { display: inline-block; }
+
+        /* Glassmorphism utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .chat-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500/30 selection:text-cyan-200 relative">
+
+    <!-- Custom Cursor DOM -->
+    <div id="cursor-dot" class="cursor-dot"></div>
+    <div id="cursor-ring" class="cursor-ring"></div>
+
+    <!-- Background Canvas and Glows -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <canvas id="bg-canvas" class="absolute inset-0 opacity-40"></canvas>
+        <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-600/20 blur-[120px] rounded-full mix-blend-screen animate-pulse-slow"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-600/20 blur-[150px] rounded-full mix-blend-screen animate-pulse-slow" style="animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6">
+        <div class="container mx-auto px-6 md:px-12 flex justify-between items-center">
+            <div class="magnetic-wrap" data-magnetic>
+                <a href="#home" class="text-2xl font-bold tracking-tighter text-white group clickable">
+                    Zarm<span class="text-cyan-400 group-hover:text-purple-400 transition-colors duration-300">loww</span>
+                </a>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#skills" class="text-sm font-medium text-gray-300 hover:text-white transition-colors relative group clickable">
+                    Skills
+                    <span class="absolute -bottom-1 left-0 w-0 h-[2px] bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#services" class="text-sm font-medium text-gray-300 hover:text-white transition-colors relative group clickable">
+                    Services
+                    <span class="absolute -bottom-1 left-0 w-0 h-[2px] bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#projects" class="text-sm font-medium text-gray-300 hover:text-white transition-colors relative group clickable">
+                    Projects
+                    <span class="absolute -bottom-1 left-0 w-0 h-[2px] bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <div class="magnetic-wrap" data-magnetic>
+                    <a href="#contact" class="px-6 py-2 rounded-full glass text-white font-medium hover:bg-white/10 transition-all shadow-[0_0_15px_rgba(0,243,255,0.1)] hover:shadow-[0_0_20px_rgba(0,243,255,0.3)] clickable inline-block">
+                        Hire Me
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div class="container mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center text-center">
+            
+            <div class="reveal mb-6 inline-block px-4 py-1.5 rounded-full glass text-sm text-cyan-300 shadow-[0_0_15px_rgba(0,243,255,0.2)]">
+                <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 mr-2 animate-pulse"></span>
+                Available for new projects
+            </div>
+
+            <h1 class="reveal text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 mb-4" style="transition-delay: 100ms;">
+                Hi, I'm Zarmloww
+            </h1>
+
+            <div class="reveal text-xl md:text-3xl font-medium text-gray-400 h-10 mb-8 flex items-center justify-center" style="transition-delay: 200ms;">
+                <span class="text-white mr-2">I am a</span>
+                <span id="typed-text" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 font-bold"></span>
+                <span class="type-cursor"></span>
+            </div>
+
+            <p class="reveal max-w-2xl text-gray-400 mb-12" style="transition-delay: 300ms;">
+                Building premium digital experiences, robust backend architectures, and immersive gaming communities with enterprise-grade quality.
+            </p>
+
+            <div class="reveal flex flex-col sm:flex-row gap-4" style="transition-delay: 400ms;">
+                <div class="magnetic-wrap" data-magnetic>
+                    <a href="#projects" class="clickable px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold tracking-wide hover:scale-105 transition-transform shadow-[0_0_30px_rgba(0,243,255,0.3)] flex items-center gap-2 inline-block">
+                        View Portfolio <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </a>
+                </div>
+                <div class="magnetic-wrap" data-magnetic>
+                    <a href="https://github.com/Zarmloww" target="_blank" class="clickable px-8 py-4 rounded-full glass text-white font-bold tracking-wide hover:bg-white/10 transition-colors flex items-center gap-2 inline-block">
+                        <i class="fa-brands fa-github text-lg"></i> GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 relative z-10">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Stat Cards -->
+                <div class="reveal p-6 rounded-2xl glass text-center hover:bg-white/10 transition-colors group relative overflow-hidden" data-delay="0">
+                    <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <h3 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 mb-2 group-hover:from-cyan-400 group-hover:to-blue-500 transition-all">50+</h3>
+                    <p class="text-sm font-medium text-gray-400 uppercase tracking-widest">Projects</p>
+                </div>
+                <div class="reveal p-6 rounded-2xl glass text-center hover:bg-white/10 transition-colors group relative overflow-hidden" data-delay="100">
+                    <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <h3 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 mb-2 group-hover:from-cyan-400 group-hover:to-blue-500 transition-all">100+</h3>
+                    <p class="text-sm font-medium text-gray-400 uppercase tracking-widest">Discord Bots</p>
+                </div>
+                <div class="reveal p-6 rounded-2xl glass text-center hover:bg-white/10 transition-colors group relative overflow-hidden" data-delay="200">
+                    <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <h3 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 mb-2 group-hover:from-cyan-400 group-hover:to-blue-500 transition-all">25+</h3>
+                    <p class="text-sm font-medium text-gray-400 uppercase tracking-widest">MC Servers</p>
+                </div>
+                <div class="reveal p-6 rounded-2xl glass text-center hover:bg-white/10 transition-colors group relative overflow-hidden" data-delay="300">
+                    <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <h3 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 mb-2 group-hover:from-cyan-400 group-hover:to-blue-500 transition-all">5+</h3>
+                    <p class="text-sm font-medium text-gray-400 uppercase tracking-widest">Years Exp</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Ecosystem (Canvas) -->
+    <section id="skills" class="py-10 relative z-10">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="reveal relative w-full max-w-5xl mx-auto h-[400px] bg-black/20 rounded-3xl glass overflow-hidden flex items-center justify-center">
+                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5"></div>
+                <canvas id="tech-canvas" class="w-full h-full object-contain mix-blend-screen opacity-90"></canvas>
+                <div class="absolute pointer-events-none text-center">
+                    <h3 class="text-3xl font-black text-white/10 uppercase tracking-[0.2em] blur-[1px]">Tech Ecosystem</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="py-24 relative z-10">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="reveal mb-16">
+                <h2 class="text-3xl md:text-5xl font-black mb-4">Premium <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Services</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-cyan-400 to-transparent"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Service 1 -->
+                <div class="reveal tilt-card perspective-1000" data-delay="0">
+                    <div class="tilt-inner h-full p-8 rounded-3xl glass hover:border-cyan-500/50 transition-colors group transform-gpu">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-layer-group text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">Web Development</h3>
+                        <p class="text-gray-400 leading-relaxed">Premium responsive frontends and robust backends using React, Next.js, and Node.</p>
+                    </div>
+                </div>
+                <!-- Service 2 -->
+                <div class="reveal tilt-card perspective-1000" data-delay="100">
+                    <div class="tilt-inner h-full p-8 rounded-3xl glass hover:border-purple-500/50 transition-colors group transform-gpu">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center text-purple-400 mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-brands fa-discord text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">Discord Bots</h3>
+                        <p class="text-gray-400 leading-relaxed">Advanced custom bots with ticket systems, economy, web dashboards, and slash commands.</p>
+                    </div>
+                </div>
+                <!-- Service 3 -->
+                <div class="reveal tilt-card perspective-1000" data-delay="0">
+                    <div class="tilt-inner h-full p-8 rounded-3xl glass hover:border-green-500/50 transition-colors group transform-gpu">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center text-green-400 mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-server text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">Minecraft Servers</h3>
+                        <p class="text-gray-400 leading-relaxed">Custom setups, plugin configuration, network optimization, and gamemode creation.</p>
+                    </div>
+                </div>
+                <!-- Service 4 -->
+                <div class="reveal tilt-card perspective-1000" data-delay="100">
+                    <div class="tilt-inner h-full p-8 rounded-3xl glass hover:border-blue-500/50 transition-colors group transform-gpu">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-code text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">API Integration</h3>
+                        <p class="text-gray-400 leading-relaxed">Seamless connection between external services, databases, and your custom applications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="py-24 relative z-10">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="reveal mb-16 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl md:text-5xl font-black mb-4">Featured <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Projects</span></h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-400 to-transparent"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Project 1 -->
+                <div class="reveal group relative rounded-3xl overflow-hidden glass hover:border-white/20 transition-all duration-300" data-delay="0">
+                    <div class="h-64 bg-black relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1000" alt="Bot Dashboard" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#03030a] via-transparent to-transparent opacity-100"></div>
+                        <div class="absolute inset-0 bg-cyan-500/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-500"></div>
+                    </div>
+                    <div class="p-8 relative z-10">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">React</span>
+                            <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">Node.js</span>
+                            <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">MongoDB</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">Nexus Bot Dashboard</h3>
+                        <p class="text-gray-400 mb-6">Advanced Discord bot management panel with real-time stats, economy leaderboard, and guild configurations.</p>
+                        <div class="flex gap-4">
+                            <a href="#" class="clickable flex-1 py-3 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Live Demo
+                            </a>
+                            <a href="#" class="clickable p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center">
+                                <i class="fa-brands fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="reveal group relative rounded-3xl overflow-hidden glass hover:border-white/20 transition-all duration-300" data-delay="100">
+                    <div class="h-64 bg-black relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=1000" alt="Aetheria Network" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#03030a] via-transparent to-transparent opacity-100"></div>
+                        <div class="absolute inset-0 bg-purple-500/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-500"></div>
+                    </div>
+                    <div class="p-8 relative z-10">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">Next.js</span>
+                            <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">Java</span>
+                            <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">Tailwind</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors">Aetheria Network</h3>
+                        <p class="text-gray-400 mb-6">Custom Minecraft network website with integrated Tebex store, forums, and live player statistics tracking.</p>
+                        <div class="flex gap-4">
+                            <a href="#" class="clickable flex-1 py-3 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Live Demo
+                            </a>
+                            <a href="#" class="clickable p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center">
+                                <i class="fa-brands fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="reveal group relative rounded-3xl overflow-hidden glass hover:border-white/20 transition-all duration-300 lg:col-span-2" data-delay="0">
+                    <div class="h-72 bg-black relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1000" alt="Cyber UI Kit" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-1000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#03030a] via-[#03030a]/50 to-transparent opacity-100"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 w-full p-8 z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div class="max-w-xl">
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">TypeScript</span>
+                                <span class="px-3 py-1 text-xs font-medium bg-white/10 rounded-full text-gray-300">Three.js</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">Cyber UI Component Library</h3>
+                            <p class="text-gray-300">Premium futuristic UI component library for modern web apps featuring glassmorphism, 3D elements, and complex physics-based interactions.</p>
+                        </div>
+                        <div class="flex gap-4 shrink-0">
+                            <a href="#" class="clickable px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview
+                            </a>
+                            <a href="#" class="clickable px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center gap-2">
+                                <i class="fa-brands fa-github text-xl"></i> Source
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 relative z-10">
+        <div class="container mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-16 items-center">
+            
+            <!-- Forms -->
+            <div class="flex-1 w-full reveal">
+                <div class="mb-10">
+                    <h2 class="text-3xl md:text-5xl font-black mb-4">Let's <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Connect</span></h2>
+                    <p class="text-gray-400">Ready to start your next big project? Drop a message or place a service order directly.</p>
+                </div>
+
+                <div class="flex gap-2 mb-8 glass p-1.5 rounded-xl w-fit">
+                    <button id="btn-contact" class="clickable px-6 py-2 rounded-lg text-sm font-medium transition-all bg-cyan-500/20 text-cyan-300" onclick="switchTab('contact')">
+                        General Inquiry
+                    </button>
+                    <button id="btn-order" class="clickable px-6 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white" onclick="switchTab('order')">
+                        Order Service
+                    </button>
+                </div>
+
+                <!-- Contact Form -->
+                <form id="form-contact" class="flex flex-col gap-4 animate-[fadeIn_0.5s_ease-out]" onsubmit="submitForm(event, 'Contact')">
+                    <input type="text" placeholder="Your Name" required class="clickable glass rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all outline-none">
+                    <input type="email" placeholder="Your Email" required class="clickable glass rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all outline-none">
+                    <textarea placeholder="Your Message" rows="4" required class="clickable glass rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all resize-none outline-none"></textarea>
+                    <button type="submit" class="clickable mt-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 hover:shadow-[0_0_20px_rgba(0,243,255,0.3)] transition-all">
+                        Send Message <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+
+                <!-- Order Form (Hidden initially) -->
+                <form id="form-order" class="hidden flex-col gap-4 animate-[fadeIn_0.5s_ease-out]" onsubmit="submitForm(event, 'Order')">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" placeholder="Full Name" required class="clickable glass rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all outline-none">
+                        <select required class="clickable bg-[#0a0a0f] border border-white/5 rounded-xl px-5 py-4 text-gray-300 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all appearance-none outline-none">
+                            <option value="">Select Service</option>
+                            <option value="Website">Website Development</option>
+                            <option value="Discord">Discord Bot</option>
+                            <option value="Minecraft">Minecraft Server</option>
+                        </select>
+                    </div>
+                    <input type="text" placeholder="Estimated Budget ($)" required class="clickable glass rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all outline-none">
+                    <textarea placeholder="Project Requirements..." rows="4" required class="clickable glass rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all resize-none outline-none"></textarea>
+                    <button type="submit" class="clickable mt-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 hover:shadow-[0_0_20px_rgba(189,0,255,0.3)] transition-all">
+                        Submit Order <i class="fa-solid fa-rocket"></i>
+                    </button>
+                </form>
+                
+                <!-- Success Message (Hidden) -->
+                <div id="form-success" class="hidden mt-4 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 text-center animate-[fadeIn_0.5s_ease-out]">
+                    <i class="fa-solid fa-circle-check mr-2"></i> Message sent successfully! I'll be in touch soon.
+                </div>
+            </div>
+
+            <!-- Live Chat Animation -->
+            <div class="flex-1 w-full hidden lg:block reveal" data-delay="200">
+                <div class="w-full max-w-md mx-auto glass rounded-3xl overflow-hidden shadow-2xl">
+                    <div class="p-4 border-b border-white/10 bg-white/5 flex items-center gap-3">
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="font-semibold text-white text-sm">Live Developer Chat</span>
+                    </div>
+                    <div class="p-6 flex flex-col gap-4 h-[320px] overflow-y-auto chat-scroll bg-[#05050a]/50">
+                        <!-- Chat Bubbles -->
+                        <div class="flex flex-col max-w-[85%] self-start items-start reveal" data-delay="100">
+                            <div class="px-4 py-3 rounded-2xl bg-white/10 text-gray-200 rounded-tl-sm text-sm">
+                                Hey Zarmloww, can you build a custom Discord bot with economy?
+                            </div>
+                            <span class="text-xs text-gray-500 mt-1">10:00 AM</span>
+                        </div>
+                        <div class="flex flex-col max-w-[85%] self-end items-end reveal" data-delay="400">
+                            <div class="px-4 py-3 rounded-2xl bg-cyan-600/80 text-white rounded-tr-sm text-sm">
+                                Absolutely. I can integrate it with MongoDB for fast data retrieval and build a web dashboard for it.
+                            </div>
+                            <span class="text-xs text-gray-400 mt-1">10:02 AM</span>
+                        </div>
+                        <div class="flex flex-col max-w-[85%] self-start items-start reveal" data-delay="700">
+                            <div class="px-4 py-3 rounded-2xl bg-white/10 text-gray-200 rounded-tl-sm text-sm">
+                                Sounds perfect! How long will it take?
+                            </div>
+                            <span class="text-xs text-gray-500 mt-1">10:05 AM</span>
+                        </div>
+                        <div class="flex flex-col max-w-[85%] self-end items-end reveal" data-delay="1000">
+                            <div class="px-4 py-3 rounded-2xl bg-cyan-600/80 text-white rounded-tr-sm text-sm">
+                                I can have a working prototype ready in 3 days. Let's discuss the features!
+                            </div>
+                            <span class="text-xs text-gray-400 mt-1">10:06 AM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-sm text-gray-500 relative z-10 bg-[#020208]">
+        <p class="mb-2">© 2026 Zarmloww. Crafted with precision.</p>
+        <p class="text-xs text-gray-600">Built entirely in a single file with Vanilla JS & Tailwind CSS.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. Custom Cursor Logic (Smooth LERP) ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+        
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            // Update dot instantly
+            cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        });
+
+        // Add hover effect to interactive elements
+        const clickables = document.querySelectorAll('.clickable, a, button, input, textarea, select');
+        clickables.forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+        });
+
+        function animateCursor() {
+            // LERP for smooth ring trailing
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.transform = `translate(${ringX}px, ${ringY}px)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // --- 2. Navbar Scroll Effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-[#03030a]/80', 'backdrop-blur-md', 'border-b', 'border-white/5', 'py-4');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('bg-[#03030a]/80', 'backdrop-blur-md', 'border-b', 'border-white/5', 'py-4');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // --- 3. Typing Effect ---
+        const roles = [
+            'Full Stack Developer',
+            'Discord Bot Developer',
+            'Minecraft Server Developer',
+            'UI Designer',
+            'Backend Developer'
+        ];
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typedTextSpan = document.getElementById('typed-text');
+
+        function typeEffect() {
+            const currentRole = roles[roleIndex];
+            
+            if (isDeleting) {
+                typedTextSpan.textContent = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typedTextSpan.textContent = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentRole.length) {
+                typeSpeed = 2000; // Pause at end
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                typeSpeed = 500; // Pause before new word
+            }
+
+            setTimeout(typeEffect, typeSpeed);
+        }
+        setTimeout(typeEffect, 1000); // Start delay
+
+        // --- 4. Intersection Observer for Scroll Reveals ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = entry.target.getAttribute('data-delay') || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('active');
+                    }, delay);
+                    revealObserver.unobserve(entry.target); // Reveal only once
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // --- 5. Magnetic Buttons ---
+        const magnetics = document.querySelectorAll('.magnetic-wrap');
+        magnetics.forEach(wrap => {
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Move the child element (the actual button/link)
+                const child = wrap.children[0];
+                child.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                child.style.transition = 'transform 0.1s linear';
+            });
+            wrap.addEventListener('mouseleave', () => {
+                const child = wrap.children[0];
+                child.style.transform = 'translate(0, 0)';
+                child.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+        });
+
+        // --- 6. 3D Tilt Effect ---
+        const tiltCards = document.querySelectorAll('.tilt-card');
+        tiltCards.forEach(card => {
+            const inner = card.querySelector('.tilt-inner');
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Calculate rotation (max 15 deg)
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -15;
+                const rotateY = ((x - centerX) / centerX) * 15;
+                
+                inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                inner.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                inner.style.transition = 'transform 0.5s ease';
+            });
+            card.addEventListener('mouseenter', () => {
+                inner.style.transition = 'none';
+            });
+        });
+
+        // --- 7. Form Tab Switching & Submission ---
+        function switchTab(tab) {
+            const btnContact = document.getElementById('btn-contact');
+            const btnOrder = document.getElementById('btn-order');
+            const formContact = document.getElementById('form-contact');
+            const formOrder = document.getElementById('form-order');
+            const successMsg = document.getElementById('form-success');
+            
+            successMsg.classList.add('hidden');
+
+            if (tab === 'contact') {
+                btnContact.className = 'clickable px-6 py-2 rounded-lg text-sm font-medium transition-all bg-cyan-500/20 text-cyan-300';
+                btnOrder.className = 'clickable px-6 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white';
+                formContact.classList.remove('hidden');
+                formContact.classList.add('flex');
+                formOrder.classList.add('hidden');
+                formOrder.classList.remove('flex');
+            } else {
+                btnOrder.className = 'clickable px-6 py-2 rounded-lg text-sm font-medium transition-all bg-purple-500/20 text-purple-300';
+                btnContact.className = 'clickable px-6 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white';
+                formOrder.classList.remove('hidden');
+                formOrder.classList.add('flex');
+                formContact.classList.add('hidden');
+                formContact.classList.remove('flex');
+            }
+        }
+
+        function submitForm(e, type) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            
+            // Loading state
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                form.reset();
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                document.getElementById('form-success').classList.remove('hidden');
+                
+                // Hide success after 4 seconds
+                setTimeout(() => {
+                    document.getElementById('form-success').classList.add('hidden');
+                }, 4000);
+            }, 1500);
+        }
+
+        // --- 8. Background Aurora Canvas ---
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        
+        function resizeBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
+
+        const particles = [];
+        for (let i = 0; i < 40; i++) {
+            particles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                radius: Math.random() * 2 + 1,
+                color: Math.random() > 0.5 ? 'rgba(0, 243, 255, 0.4)' : 'rgba(189, 0, 255, 0.4)'
+            });
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+                
+                bgCtx.beginPath();
+                bgCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                bgCtx.fillStyle = p.color;
+                bgCtx.shadowBlur = 15;
+                bgCtx.shadowColor = p.color;
+                bgCtx.fill();
+            });
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        // --- 9. Tech Ecosystem Canvas ---
+        const techCanvas = document.getElementById('tech-canvas');
+        const techCtx = techCanvas.getContext('2d');
+        
+        techCanvas.width = 1000;
+        techCanvas.height = 400;
+
+        const techs = ['React', 'Next.js', 'Node.js', 'MongoDB', 'Discord.js', 'TypeScript', 'Tailwind', 'Express', 'Java', 'Spigot', 'Docker', 'AWS'];
+        const nodes = techs.map(name => ({
+            name,
+            x: Math.random() * techCanvas.width,
+            y: Math.random() * techCanvas.height,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8,
+            radius: 4
+        }));
+
+        let systemMouseX = null, systemMouseY = null;
+        techCanvas.addEventListener('mousemove', (e) => {
+            const rect = techCanvas.getBoundingClientRect();
+            // Scale mouse coordinates to internal canvas resolution
+            const scaleX = techCanvas.width / rect.width;
+            const scaleY = techCanvas.height / rect.height;
+            systemMouseX = (e.clientX - rect.left) * scaleX;
+            systemMouseY = (e.clientY - rect.top) * scaleY;
+        });
+        techCanvas.addEventListener('mouseleave', () => {
+            systemMouseX = null;
+            systemMouseY = null;
+        });
+
+        function animateEcosystem() {
+            techCtx.clearRect(0, 0, techCanvas.width, techCanvas.height);
+            
+            // Update positions
+            nodes.forEach(node => {
+                node.x += node.vx;
+                node.y += node.vy;
+                
+                // Mouse interaction (repel)
+                if (systemMouseX !== null && systemMouseY !== null) {
+                    const dx = node.x - systemMouseX;
+                    const dy = node.y - systemMouseY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        node.x += (dx / dist) * 2;
+                        node.y += (dy / dist) * 2;
+                    }
+                }
+
+                // Bounce off walls
+                if (node.x < 20 || node.x > techCanvas.width - 20) node.vx *= -1;
+                if (node.y < 20 || node.y > techCanvas.height - 20) node.vy *= -1;
+            });
+
+            // Draw lines
+            techCtx.lineWidth = 1;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 200) {
+                        techCtx.beginPath();
+                        techCtx.moveTo(nodes[i].x, nodes[i].y);
+                        techCtx.lineTo(nodes[j].x, nodes[j].y);
+                        techCtx.strokeStyle = `rgba(0, 243, 255, ${1 - dist/200})`;
+                        techCtx.stroke();
+                    }
+                }
+            }
+
+            // Draw nodes and text
+            nodes.forEach(node => {
+                techCtx.beginPath();
+                techCtx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                techCtx.fillStyle = '#00f3ff';
+                techCtx.shadowBlur = 10;
+                techCtx.shadowColor = '#00f3ff';
+                techCtx.fill();
+                
+                techCtx.fillStyle = 'rgba(255,255,255,0.8)';
+                techCtx.shadowBlur = 0;
+                techCtx.font = '14px Inter, sans-serif';
+                techCtx.textAlign = 'center';
+                techCtx.fillText(node.name, node.x, node.y - 12);
+            });
+
+            requestAnimationFrame(animateEcosystem);
+        }
+        animateEcosystem();
+        
+        // CSS Animation for simple fades
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+    </script>
+</body>
+</html>
